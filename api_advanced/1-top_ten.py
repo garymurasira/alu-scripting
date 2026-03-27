@@ -2,6 +2,7 @@
 """Function that queries Reddit API and prints top 10 hot posts"""
 import json
 import urllib.request
+import urllib.error
 
 
 def top_ten(subreddit):
@@ -17,5 +18,7 @@ def top_ten(subreddit):
         posts = data.get("data", {}).get("children", [])
         for post in posts:
             print(post.get("data", {}).get("title"))
-    except Exception:
+    except urllib.error.HTTPError:
+        print(None)
+    except urllib.error.URLError:
         print(None)
