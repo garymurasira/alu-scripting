@@ -1,24 +1,16 @@
 #!/usr/bin/python3
-"""Function that queries Reddit API and prints top 10 hot posts"""
-import json
-import urllib.request
-import urllib.error
+""" top_ten.py """
+import requests
 
 
 def top_ten(subreddit):
-    """Prints the titles of the first 10 hot posts for a given subreddit"""
-    url = "https://www.reddit.com/r/{}/hot.json?limit=10".format(subreddit)
-    req = urllib.request.Request(url)
-    req.add_header(
-        'User-Agent', 'linux:myredditapp:v1.0 (by /u/GabbyIT-pixel)'
-    )
-    try:
-        response = urllib.request.urlopen(req, timeout=10)
-        data = json.loads(response.read().decode('utf-8'))
-        posts = data.get("data", {}).get("children", [])
-        for post in posts:
-            print(post.get("data", {}).get("title"))
-    except urllib.error.HTTPError:
+    """ prints the titles of the first 10 hot posts listed in a subreddit """
+    url = 'https://www.reddit.com/r/{}/hot.json?limit=10'.format(subreddit)
+    headers = {'User-Agent': 'Mozilla/5.0'}
+    response = requests.get(url, headers=headers, allow_redirects=False)
+    if response.status_code != 200:
         print(None)
-    except urllib.error.URLError:
-        print(None)
+        return
+    posts = response.json()['data']['children']
+    for post in posts:
+        print(post['data']['title'])
